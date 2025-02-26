@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { JSX } from "react"; // ✅ Fix for JSX error
+import { JSX } from "react"; // Ensure JSX is properly recognized
 
 interface Model {
   name: string;
@@ -16,19 +16,19 @@ const models: Model[] = [
   {
     name: "VoltX Sedan",
     description: "Speed meets sustainability.",
-    image: "/voltx-sedan.jpg",
+    image: "/voltx.jpg", // ✅ Updated to match your filename
     link: "/models/voltx-sedan",
   },
   {
     name: "VoltR SUV",
     description: "Power and luxury in one ride.",
-    image: "/voltr-suv.jpg",
+    image: "/voltr.jpg", // ✅ Updated to match your filename
     link: "/models/voltr-suv",
   },
   {
     name: "VoltT Truck",
     description: "Built to go beyond.",
-    image: "/voltt-truck.jpg",
+    image: "/voltt.jpg", // ✅ Updated to match your filename
     link: "/models/voltt-truck",
   },
 ];
