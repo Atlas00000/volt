@@ -1,83 +1,119 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { JSX } from "react"; // Ensure JSX is properly recognized
+import { useRef } from "react";
 
-interface Model {
-  name: string;
-  description: string;
-  image: string;
-  link: string;
-}
-
-const models: Model[] = [
-  {
-    name: "VoltX Sedan",
-    description: "Speed meets sustainability.",
-    image: "/voltx.jpg", // ✅ Updated to match your filename
-    link: "/models/voltx-sedan",
-  },
-  {
-    name: "VoltR SUV",
-    description: "Power and luxury in one ride.",
-    image: "/voltr.jpg", // ✅ Updated to match your filename
-    link: "/models/voltr-suv",
-  },
-  {
-    name: "VoltT Truck",
-    description: "Built to go beyond.",
-    image: "/voltt.jpg", // ✅ Updated to match your filename
-    link: "/models/voltt-truck",
-  },
+const models = [
+  { name: "VoltX Sedan", description: "Speed meets sustainability.", image: "/voltx.jpg", link: "/models/voltx-sedan" },
+  { name: "VoltR SUV", description: "Power and luxury in one ride.", image: "/voltr.jpg", link: "/models/voltr-suv" },
+  { name: "VoltT Truck", description: "Built to go beyond.", image: "/voltt.jpg", link: "/models/voltt-truck" },
 ];
 
 export default function ModelsPage(): JSX.Element {
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"],
+  });
+
   return (
-    <div className="bg-black text-white min-h-screen px-6 py-20">
+    <div style={{ backgroundColor: "black", color: "white", minHeight: "100vh", padding: "40px 20px" }} ref={containerRef}>
       {/* Hero Section */}
-      <section className="relative h-96 flex items-center justify-center text-center">
+      <motion.section
+        style={{
+          position: "relative",
+          height: "90vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          textAlign: "center",
+          overflow: "hidden",
+        }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+      >
         <Image
           src="/models-hero.jpg"
           alt="Our Electric Models"
           layout="fill"
           objectFit="cover"
-          className="absolute inset-0 z-0"
+          style={{ position: "absolute", inset: 0, zIndex: 0 }}
         />
-        <div className="relative z-10 bg-black bg-opacity-50 p-8 rounded-lg">
-          <h1 className="text-5xl font-bold">Explore Our Models</h1>
-          <p className="text-lg mt-2">Discover the perfect electric vehicle for you.</p>
+        <div style={{ position: "relative", zIndex: 10, backgroundColor: "rgba(0, 0, 0, 0.5)", padding: "20px", borderRadius: "10px" }}>
+          <h1 style={{ fontSize: "3rem", fontWeight: "bold" }}>Explore Our Models</h1>
+          <p style={{ fontSize: "1.2rem", marginTop: "10px" }}>Discover the perfect electric vehicle for you.</p>
         </div>
-      </section>
+      </motion.section>
 
-      {/* Models Grid */}
-      <section className="py-16 grid md:grid-cols-3 gap-8 text-center">
-        {models.map((model, index) => (
-          <motion.div
-            key={index}
-            className="bg-gray-900 p-6 rounded-lg shadow-lg"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: index * 0.3 }}
-          >
-            <Image
-              src={model.image}
-              alt={model.name}
-              width={400}
-              height={250}
-              className="rounded-lg"
-            />
-            <h3 className="text-2xl font-semibold mt-4">{model.name}</h3>
-            <p className="text-gray-400 mt-2">{model.description}</p>
-            <Link
-              href={model.link}
-              className="mt-4 inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-lg"
+      {/* Models Section with Parallax Effect */}
+      <section style={{ padding: "80px 0", display: "flex", flexDirection: "column", gap: "80px" }}>
+        {models.map((model, index) => {
+          const y = useTransform(scrollYProgress, [0, 1], [0, -200 * (index + 1)]); // ✅ Stronger Parallax Effect
+
+          return (
+            <motion.div
+              key={index}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "30px",
+                textAlign: "center",
+                maxWidth: "100%",
+                overflow: "hidden",
+              }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: index * 0.2 }}
             >
-              View Details
-            </Link>
-          </motion.div>
-        ))}
+              {/* Image Wrapper */}
+              <motion.div
+                style={{
+                  width: "100%",
+                  maxWidth: "800px",
+                  height: "auto",
+                  overflow: "hidden",
+                  borderRadius: "10px",
+                  boxShadow: "0 10px 20px rgba(255, 255, 255, 0.1)",
+                }}
+              >
+                <Image
+                  src={model.image}
+                  alt={model.name}
+                  width={800}
+                  height={500}
+                  style={{ width: "100%", height: "auto", objectFit: "cover", borderRadius: "10px" }}
+                />
+              </motion.div>
+
+              {/* Text & Link */}
+              <div>
+                <h3 style={{ fontSize: "2.5rem", fontWeight: "bold" }}>{model.name}</h3>
+                <p style={{ fontSize: "1.2rem", color: "gray", marginTop: "10px" }}>{model.description}</p>
+                <Link
+                  href={model.link}
+                  style={{
+                    display: "inline-block",
+                    marginTop: "20px",
+                    padding: "12px 24px",
+                    backgroundColor: "#2563eb",
+                    color: "white",
+                    borderRadius: "8px",
+                    fontSize: "1.2rem",
+                    transition: "0.3s",
+                  }}
+                >
+                  View Details
+                </Link>
+              </div>
+            </motion.div>
+          );
+        })}
       </section>
     </div>
   );

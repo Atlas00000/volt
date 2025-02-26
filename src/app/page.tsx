@@ -1,58 +1,102 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
 
 export default function HomePage(): JSX.Element {
-  const [hydrated, setHydrated] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
 
   useEffect(() => {
-    setHydrated(true);
+    // Add 0.5s delay before the video appears
+    const timer = setTimeout(() => {
+      setShowVideo(true);
+    }, 500);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
-    <div className="bg-black text-white min-h-screen">
-      {/* Hero Section */}
-      <section className="relative h-screen flex flex-col items-center justify-center text-center px-6">
-        <Image
-          src="/hero-image.jpg"
-          alt="VoltX Electric Car"
-          layout="fill"
-          objectFit="cover"
-          className="absolute inset-0 z-0"
-        />
-        <div className="relative z-10">
-          {hydrated && (
-            <motion.h1
-              className="text-5xl md:text-7xl font-bold mb-4"
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1 }}
-            >
-              The Future of Electric Performance Starts Here
-            </motion.h1>
-          )}
-          <p className="text-lg md:text-xl mb-6">
-            Experience the next generation of electric mobility—sleek, smart, and built for the future.
-          </p>
-          <div className="flex gap-4">
-            <Link
-              href="/models"
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-lg"
+    <div style={{ position: "relative", minHeight: "100vh", overflow: "hidden" }}>
+      {/* Background Video */}
+      {showVideo && (
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            zIndex: 0,
+          }}
+        >
+          <source src="/homepageclip1.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      )}
+
+      {/* Hero Content */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1 }}
+        style={{
+          position: "relative",
+          zIndex: 10,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          textAlign: "center",
+          height: "100vh",
+          backgroundColor: "rgba(0, 0, 0, 0.5)", // Dark overlay for better readability
+          color: "white",
+          padding: "20px",
+        }}
+      >
+        <h1 style={{ fontSize: "4rem", fontWeight: "bold" }}>The Future of Electric Performance</h1>
+        <p style={{ fontSize: "1.5rem", marginTop: "10px" }}>Experience speed, efficiency, and sustainability.</p>
+        <div style={{ marginTop: "20px", display: "flex", gap: "15px" }}>
+          <Link href="/models">
+            <button
+              style={{
+                padding: "12px 24px",
+                backgroundColor: "#2563eb",
+                color: "white",
+                borderRadius: "8px",
+                fontSize: "1.2rem",
+                transition: "0.3s",
+                border: "none",
+                cursor: "pointer",
+              }}
             >
               Explore Models
-            </Link>
-            <Link
-              href="/order"
-              className="px-6 py-3 border border-white hover:bg-white hover:text-black rounded-lg text-lg"
+            </button>
+          </Link>
+          <Link href="/order">
+            <button
+              style={{
+                padding: "12px 24px",
+                backgroundColor: "transparent",
+                border: "2px solid white",
+                color: "white",
+                borderRadius: "8px",
+                fontSize: "1.2rem",
+                transition: "0.3s",
+                cursor: "pointer",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "white", e.currentTarget.style.color = "black")}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent", e.currentTarget.style.color = "white")}
             >
               Order Now
-            </Link>
-          </div>
+            </button>
+          </Link>
         </div>
-      </section>
+      </motion.div>
     </div>
   );
 }
